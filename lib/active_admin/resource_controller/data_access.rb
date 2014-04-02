@@ -51,8 +51,12 @@ module ActiveAdmin
         collection = apply_sorting(collection)
         collection = apply_filtering(collection)
         collection = apply_scoping(collection)
-        collection = apply_pagination(collection)
-        collection = apply_decorator(collection)
+
+        unless request.format == 'text/csv'
+          collection = apply_pagination(collection)
+        end
+
+        collection = apply_collection_decorator(collection)
 
         collection
       end
@@ -274,14 +278,9 @@ module ActiveAdmin
       end
 
       def per_page
-        return max_csv_records if request.format == 'text/csv'
         return max_per_page if active_admin_config.paginate == false
 
         @per_page || active_admin_config.per_page
-      end
-
-      def max_csv_records
-        10_000
       end
 
       def max_per_page
