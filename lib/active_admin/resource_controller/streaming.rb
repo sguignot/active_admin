@@ -25,6 +25,8 @@ module ActiveAdmin
           options = default.merge active_admin_config.csv_builder.options
           columns = active_admin_config.csv_builder.render_columns(self)
 
+          headers['Cache-Control'] = 'no-cache'
+
           self.response_body = Enumerator.new do |csv|
             csv << CSV.generate_line(columns.map(&:name))
             collection.find_each do |resource|
